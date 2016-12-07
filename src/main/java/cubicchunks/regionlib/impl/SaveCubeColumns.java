@@ -79,7 +79,7 @@ public class SaveCubeColumns {
 	/**
 	 * Reads entry at given location.
 	 * <p>
-	 * This can be accessed from multiple threads.
+	 * This can be accessed from multiple threads. (thread safe)
 	 */
 	public Optional<byte[]> load(EntryLocation2D location) throws IOException, CurruptedDataException {
 		return saveSection2D.load(location);
