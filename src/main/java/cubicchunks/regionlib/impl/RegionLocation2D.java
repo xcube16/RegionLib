@@ -49,6 +49,10 @@ public class RegionLocation2D implements IRegionLocation<RegionLocation2D, Entry
 		return name;
 	}
 
+	@Override public int getEntryCount() {
+		return EntryLocation2D.ENTRIES_PER_REGION;
+	}
+
 	@Override public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;

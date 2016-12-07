@@ -29,13 +29,8 @@ import java.nio.file.Path;
 import java.util.Optional;
 
 import cubicchunks.regionlib.CurruptedDataException;
-import cubicchunks.regionlib.IEntryLocation;
 import cubicchunks.regionlib.IOWriteTask;
 import cubicchunks.regionlib.SaveSection;
-import cubicchunks.regionlib.region.IRegionLocation;
-import cubicchunks.regionlib.region.Region;
-import cubicchunks.regionlib.region.RegionCache;
-import cubicchunks.regionlib.region.RegionFactory;
 
 /**
  * A save for 3d and 2d structures.
@@ -94,39 +89,17 @@ public class SaveCubeColumns {
 	 * @param directory directory for the save
 	 */
 	public static SaveCubeColumns create(Path directory) throws IOException {
-		final int sectorSize = 512;
-		final int maxRegionsLoaded = 256;
-
 		Files.createDirectories(directory);
 
 		Path part2d = directory.resolve("region2d");
 		Files.createDirectory(part2d);
 
-		// diamond operator won't work here with javac for some strange reason, even if IDEA thinks it's ok
-		RegionCache<RegionLocation2D, EntryLocation2D> regionCache2d = new RegionCache<RegionLocation2D, EntryLocation2D>(
-			regionFactoryIn(part2d, EntryLocation2D.ENTRIES_PER_REGION, sectorSize), maxRegionsLoaded);
-
 		Path part3d = directory.resolve("region3d");
 		Files.createDirectory(part3d);
 
-		RegionCache<RegionLocation3D, EntryLocation3D> regionCache3d = new RegionCache<RegionLocation3D, EntryLocation3D>(
-			regionFactoryIn(part3d, EntryLocation3D.ENTRIES_PER_REGION, sectorSize), maxRegionsLoaded);
-
-		SaveSection<RegionLocation2D, EntryLocation2D> section2d = new SaveSection<>(regionCache2d);
-		SaveSection<RegionLocation3D, EntryLocation3D> section3d = new SaveSection<>(regionCache3d);
+		SaveSection<RegionLocation2D, EntryLocation2D> section2d = new SaveSection<>(part2d);
+		SaveSection<RegionLocation3D, EntryLocation3D> section3d = new SaveSection<>(part3d);
 
 		return new SaveCubeColumns(section2d, section3d);
-	}
-
-	private static <R extends IRegionLocation<R, L>, L extends IEntryLocation<R, L>> RegionFactory<R, L> regionFactoryIn(Path directory, int entriesPerRegion, int sectorSize) {
-		return (l, t) -> {
-			Path regionPath = directory.resolve(l.getRegionName());
-
-			if (t == RegionFactory.CreateType.LOAD && !Files.exists(regionPath)) {
-				return Optional.empty();
-			}
-
-			return Optional.of(new Region<>(regionPath, entriesPerRegion, sectorSize));
-		};
 	}
 }

@@ -55,6 +55,10 @@ public class RegionLocation3D implements IRegionLocation<RegionLocation3D, Entry
 		return name;
 	}
 
+	@Override public int getEntryCount() {
+		return EntryLocation3D.ENTRIES_PER_REGION;
+	}
+
 	@Override public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
